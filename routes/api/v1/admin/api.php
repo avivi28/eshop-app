@@ -9,9 +9,4 @@ Route::group(['prefix' => 'admin'], function () {
         Route::delete('/products/{id}', [ProductController::class, 'remove']);
         Route::post('/products/{id}/discount', [ProductController::class, 'addDiscount']);
     });
-    // Route::group(['middleware' => 'role'], function () {
-    //     Route::post('/products', [ProductController::class, 'create']);
-    //     Route::delete('/products/{id}', [ProductController::class, 'remove']);
-    //     Route::post('/products/{id}/discount', [ProductController::class, 'addDiscount']);
-    // });
 });

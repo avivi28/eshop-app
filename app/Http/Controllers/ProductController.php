@@ -27,7 +27,9 @@ class ProductController extends Controller
         ]);
 
         return response()->api(
-            $product
+            [
+                $product
+            ]
         );
     }
 
@@ -36,7 +38,9 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
         $product->delete();
 
-        return response()->json(['message' => 'Product removed successfully']);
+        return response()->api(
+            []
+        );
     }
 
     public function addDiscount(Request $request, $id)
