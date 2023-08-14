@@ -17,3 +17,15 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+foreach (glob(__DIR__ . "/api/v1/user/*.php") as $filename) {
+    require_once $filename;
+}
+foreach (glob(__DIR__ . "/api/v1/admin/*.php") as $filename) {
+    require_once $filename;
+}
+
+// // get '/' return 'hello'
+// Route::get('/admin', function () {
+//     return 'hello';
+// })->middleware('admin');
