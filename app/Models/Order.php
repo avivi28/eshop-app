@@ -17,6 +17,12 @@ class Order extends Model
         'user_id',
     ];
 
+    protected $casts = [
+        'discount_id' => 'integer',
+        'product_id' => 'integer',
+        'user_id' => 'integer'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
