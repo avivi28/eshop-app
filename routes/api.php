@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,9 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+//login first to check if user is admin or not
+Route::post('/login', [AuthController::class, 'login']);
 
 foreach (glob(__DIR__ . "/api/v1/user/*.php") as $filename) {
     require_once $filename;
@@ -24,8 +28,3 @@ foreach (glob(__DIR__ . "/api/v1/user/*.php") as $filename) {
 foreach (glob(__DIR__ . "/api/v1/admin/*.php") as $filename) {
     require_once $filename;
 }
-
-// // get '/' return 'hello'
-// Route::get('/admin', function () {
-//     return 'hello';
-// })->middleware('admin');
