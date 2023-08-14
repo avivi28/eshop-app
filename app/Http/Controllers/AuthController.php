@@ -3,25 +3,38 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $credentials = $request->validate([
+        $validate = validator($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $token = Str::random(60);
-            $api_token = hash('sha256', $token);
-
-            return response()->api(['token' => $api_token]);
+        if ($validate->fails()) {
+            return response()->error($validate->errors(), 400);
         }
 
-        return response()->error('Invalid credentials', 401);
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->error('User not found', 404);
+        }
+
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->error('Password not match', 401);
+        }
+
+        $token = $user->createToken('api-token');
+
+
+        return response()->api([
+            'token' => $token->plainTextToken,
+            'user' => $user,
+        ]);
     }
 }
