@@ -13,11 +13,13 @@ class Product extends Model
     protected $fillable = [
         'name',
         'desc',
-        'price'
+        'price',
+        'stock'
     ];
 
     protected $casts = [
-        'price' => 'integer'
+        'price' => 'integer',
+        'stock' => 'integer'
     ];
 
     public function discounts()
