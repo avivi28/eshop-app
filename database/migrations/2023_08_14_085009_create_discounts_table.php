@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('desc')->nullable();
             $table->integer('percentage');
+            $table->integer('buy_quantity')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
