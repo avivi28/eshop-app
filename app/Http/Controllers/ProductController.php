@@ -42,17 +42,4 @@ class ProductController extends Controller
             []
         );
     }
-
-    public function addDiscount(Request $request, $id)
-    {
-        $request->validate([
-            'discount' => 'required|numeric|min:0|max:100',
-        ]);
-
-        $product = Product::findOrFail($id);
-        $product->discount = $request->input('discount');
-        $product->save();
-
-        return response()->json($product);
-    }
 }
