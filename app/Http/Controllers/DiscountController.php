@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class DiscountController extends Controller
 {
+    /**
+     * Create discount
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function create(Request $request)
     {
         $validate =  validator($request->all(), [

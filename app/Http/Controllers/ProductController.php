@@ -7,6 +7,11 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
+    /**
+     * Create product
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function create(Request $request)
     {
         $validate =  validator($request->all(), [
@@ -33,6 +38,11 @@ class ProductController extends Controller
         );
     }
 
+    /**
+     * Remove product
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function remove($id)
     {
         $product = Product::findOrFail($id);
