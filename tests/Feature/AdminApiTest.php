@@ -65,4 +65,36 @@ class AdminApiTest extends TestCase
 
         $this->assertDatabaseMissing('products', ['id' => $product->id]);
     }
+
+    /**
+     * Test creating a discount via API.
+     *
+     * @return void
+     */
+    public function testCreateDiscount()
+    {
+        // Create a user with role admin
+        $user = User::factory()->create([
+            'role' => 'admin'
+        ]);
+
+        // Get user token
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        $data = [
+            'name' => $this->faker->word,
+            'desc' => $this->faker->sentence,
+            'buy_quantity' => $this->faker->randomNumber(2),
+            'percentage' => $this->faker->randomNumber(2),
+            'is_active' => $this->faker->boolean,
+            'start_date' => $this->faker->date,
+            'end_date' => $this->faker->date,
+        ];
+
+        $response = $this->postJson('/api/v1/admin/discounts', $data, ['Authorization' => 'Bearer ' . $token]);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas('discounts', $data);
+    }
 }
