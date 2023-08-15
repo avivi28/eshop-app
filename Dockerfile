@@ -1,38 +1,34 @@
-# Use the official PHP 8.1.0 FPM image as the base image
+# Use an official PHP runtime as the base image
 FROM php:8.1.0-fpm
 
-# Install additional dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    libzip-dev \
-    && docker-php-ext-install zip pdo_mysql
-
-# Set the working directory
+# Set the working directory inside the container
 WORKDIR /var/www/html
 
-# Set the COMPOSER_ALLOW_SUPERUSER environment variable
-ENV COMPOSER_ALLOW_SUPERUSER 1
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Copy the rest of the application code
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Copy the project files into the container
 COPY . .
 
-# Copy the composer.json and composer.lock files to the container
-# COPY composer.json composer.lock 
+# Install project dependencies
+RUN composer install --no-interaction --no-scripts --no-suggest
 
-# Install PHP dependencies
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-RUN composer install --no-scripts --no-autoloader
+# Generate the Laravel application key
+RUN php artisan key:generate
 
-
-# Generate the autoload files
-RUN composer dump-autoload --optimize
-
-# Set the permissions for Laravel storage and bootstrap cache directories
-RUN chown -R www-data:www-data storage bootstrap/cache
-
-# Expose port 9000
+# Expose port 9000 to the outside world
 EXPOSE 9000
 
-# Start PHP-FPM
+# Start the PHP FPM server
 CMD ["php-fpm"]
