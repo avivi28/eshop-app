@@ -1,0 +1,41 @@
+# Files and directories to ignore in Docker build context
+
+# Laravel specific files
+vendor/
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn.lock
+package-lock.json
+
+# Development and testing files
+tests/
+phpunit.xml
+phpunit.xml.dist
+phpunit-coverage.xml
+phpstan.neon
+phpstan-baseline.neon
+.codeclimate.yml
+.codeclimate.yml.*
+.editorconfig
+.php_cs
+.php_cs.dist
+.php_cs.cache
+
+# Version control files and directories
+.git
+.gitignore
+.svn
+.hg
+.hgignore
+.dockerignore
+
+# Editor specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Other files and directories
+.dockerignore
+README.md
