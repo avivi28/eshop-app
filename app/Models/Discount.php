@@ -17,17 +17,21 @@ class Discount extends Model
         'percentage',
         'is_active',
         'start_date',
-        'end_date'
+        'end_date',
+        'product_id'
     ];
 
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
+        'buy_quantity' => 'integer',
+        'percentage' => 'integer',
+        'product_id' => 'integer'
     ];
 
-    public function products()
+    public function product()
     {
-        return $this->belongsToMany(Product::class, 'discounts_products');
+        return $this->belongsTo(Product::class);
     }
 }

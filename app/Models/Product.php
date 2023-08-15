@@ -21,9 +21,4 @@ class Product extends Model
         'price' => 'integer',
         'stock' => 'integer'
     ];
-
-    public function discounts()
-    {
-        return $this->belongsToMany(Discount::class, 'discounts_products');
-    }
 }

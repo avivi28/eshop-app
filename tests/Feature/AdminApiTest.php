@@ -89,6 +89,7 @@ class AdminApiTest extends TestCase
             'is_active' => $this->faker->boolean,
             'start_date' => $this->faker->date,
             'end_date' => $this->faker->date,
+            'product_id' => Product::factory()->create()->id
         ];
 
         $response = $this->postJson('/api/v1/admin/discounts', $data, ['Authorization' => 'Bearer ' . $token]);

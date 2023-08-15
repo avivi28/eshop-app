@@ -20,6 +20,7 @@ class DiscountController extends Controller
             'is_active' => 'boolean',
             'start_date' => 'date',
             'end_date' => 'date',
+            'product_id' => 'required|exists:products,id'
         ]);
 
         if ($validate->fails()) {
@@ -34,6 +35,7 @@ class DiscountController extends Controller
             'is_active' => $request->input('is_active'),
             'start_date' => $request->input('start_date'),
             'end_date' => $request->input('end_date'),
+            'product_id' => $request->input('product_id')
         ]);
 
         return response()->api(
