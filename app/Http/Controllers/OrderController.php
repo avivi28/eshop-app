@@ -25,6 +25,7 @@ class OrderController extends Controller
         if ($basket) {
             $totalPrice = 0;
             $purchases = [];
+            $discountedAmount = 0;
 
             // Count the occurrences of each value in the array
             $counts = array_count_values($basket);
@@ -57,20 +58,11 @@ class OrderController extends Controller
                     $sets = (int) ($totalItems / $buy_quantity); // Determine the number of sets of three items
                     $remainder = $totalItems % $buy_quantity; // Calculate the remainder (additional items)
 
-                    $totalDiscountedPrice = $sets * ($regularPrice * ($discount->percentage / 100)); // Calculate the total discounted price for completed sets
-                    $remainingPrice = $remainder * $regularPrice; // Calculate the price for the remaining items
+                    $totalDiscountedPrice = $sets * $buy_quantity * ($regularPrice * ($discount->percentage / 100)); // Calculate the total discounted price for completed sets
 
-                    $finalDiscountedPrice = $totalDiscountedPrice + $remainingPrice; // Calculate the final discounted price
+                    $discountedAmount += $totalDiscountedPrice; // Calculate the total discounted amount
 
-                    $purchase['price'] = $finalDiscountedPrice; // Update the price field in the purchase array
-                    // dd($purchase);
                 }
-            }
-
-            // Calculate the total discounted amount
-            $discountedAmount = 0;
-            foreach ($purchases as $purchase) {
-                $discountedAmount += $purchase['price'];
             }
 
             // Calculate the final total price after applying discounts

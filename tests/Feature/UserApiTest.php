@@ -38,6 +38,9 @@ class UserApiTest extends TestCase
         // Assert that the product is added to the user's basket in Redis
         $basket = Redis::lrange("basket:$user_id", 0, -1);
         $this->assertTrue(in_array($product->id, $basket));
+
+        // Delete the user's basket in Redis
+        Redis::del("basket:$user_id");
     }
 
     public function testRemoveFromBasket()
@@ -67,6 +70,9 @@ class UserApiTest extends TestCase
         // Assert that the product is removed from the user's basket in Redis
         $basket = Redis::lrange("basket:$user_id", 0, -1);
         $this->assertFalse(in_array($product->id, $basket));
+
+        // Delete the user's basket in Redis
+        Redis::del("basket:$user_id");
     }
 
     public function testGetBasket()
@@ -98,59 +104,83 @@ class UserApiTest extends TestCase
         $response->assertJson([
             'data' => [1, 2],
         ]);
+
+        // Delete the user's basket in Redis
+        Redis::del("basket:$user_id");
     }
 
-    // public function testCalculateReceipt()
-    // {
-    //     // Create a user and authenticate
-    //     $user = User::factory()->create();
-    //     Sanctum::actingAs($user);
+    /**
+     * Test calculateReceipt method with discounts.
+     *
+     * @return void
+     */
+    public function testCalculateReceiptWithDiscounts()
+    {
+        // Create a user with role user
+        $user = User::factory()->create([
+            'role' => 'user'
+        ]);
 
-    //     // Add some products to the user's basket in Redis
-    //     Redis::sadd("basket:{$user->id}", 1);
-    //     Redis::sadd("basket:{$user->id}", 2);
+        // Get user token
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-    //     // Create a discount
-    //     $discount = Discount::factory()->create([
-    //         'is_active' => true,
-    //         'buy_quantity' => null,
-    //     ]);
+        // Get user id
+        $user_id = $user->id;
 
-    //     // Configure the mocked getProductPrice method to return a fixed price for testing
-    //     $this->mock(Product::class)
-    //         ->shouldReceive('find')
-    //         ->andReturnUsing(function ($productId) {
-    //             // Return a mock product with a fixed price for testing
-    //             return new Product(['id' => $productId, 'price' => 10.0]);
-    //         });
+        // Create sample products
+        $product1 = Product::factory()->create(['price' => 1000]); // Price: $10.00
+        $product2 = Product::factory()->create(['price' => 500]); // Price: $5.00
+        $product3 = Product::factory()->create(['price' => 800]); // Price: $8.00
 
-    //     // Configure the mocked Discount model to return the created discount for testing
-    //     $this->mock(Discount::class)
-    //         ->shouldReceive('where')
-    //         ->with('is_active', true)
-    //         ->once()
-    //         ->andReturnSelf()
-    //         ->shouldReceive('where')
-    //         ->with('buy_quantity', null)
-    //         ->once()
-    //         ->andReturnSelf()
-    //         ->shouldReceive('get')
-    //         ->once()
-    //         ->andReturn(collect([$discount]));
+        // Create a discount for product1 (buy two, get one 50% off)
+        $discount = Discount::factory()->create([
+            'product_id' => $product1->id,
+            'buy_quantity' => 2,
+            'percentage' => 50,
+            'is_active' => true
+        ]);
 
-    //     // Make a request to calculate the receipt
-    //     $response = $this->get('/user/receipt');
+        $discount = Discount::factory()->create([
+            'product_id' => $product2->id,
+            'buy_quantity' => 2,
+            'percentage' => 50,
+            'is_active' => true
+        ]);
 
-    //     $response->assertStatus(200);
+        // Delete the user's basket in Redis
+        Redis::del("basket:$user_id");
 
-    //     // Assert the response JSON structure and the calculated receipt values
-    //     $response->assertJson([
-    //         'data' => [
-    //             'total_price' => 20.0,
-    //             'applied_discounts' => [$discount->name],
-    //             'discounted_amount' => 4.0,
-    //             'final_total_price' => 16.0,
-    //         ],
-    //     ]);
-    // }
+        // Add products to the user's basket in Redis
+        Redis::lpush("basket:{$user_id}", $product1->id);
+        Redis::lpush("basket:{$user_id}", $product1->id); // This item should get the discount
+        Redis::lpush("basket:{$user_id}", $product1->id); // This item should get the discount
+
+        Redis::lpush("basket:{$user_id}", $product2->id);
+        Redis::lpush("basket:{$user_id}", $product2->id);
+        Redis::lpush("basket:{$user_id}", $product2->id); // This item should not get the discount
+
+        Redis::lpush("basket:{$user_id}", $product3->id);
+        Redis::lpush("basket:{$user_id}", $product3->id); // This item should not get the discount
+
+        // Make a request to calculate the receipt
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->getJson('/api/v1/user/orders');
+
+        // Assert the response data
+        $response->assertStatus(200);
+
+        $responseData = json_decode($response->getContent(), true);
+
+        $expectedData = [
+            "total_price" => 61,
+            "discounted_amount" => 15,
+            "final_total_price" => 46
+        ];
+
+        $this->assertEquals($expectedData, $responseData['data']);
+
+        // Delete the user's basket in Redis
+        Redis::del("basket:$user_id");
+    }
 }
