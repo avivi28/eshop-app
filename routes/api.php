@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BasketController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\DiscountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,9 +25,21 @@ use App\Http\Controllers\AuthController;
 //login first to check if user is admin or not
 Route::post('/login', [AuthController::class, 'login']);
 
-foreach (glob(__DIR__ . "/api/v1/user/*.php") as $filename) {
-    require_once $filename;
-}
-foreach (glob(__DIR__ . "/api/v1/admin/*.php") as $filename) {
-    require_once $filename;
-}
+Route::group(['prefix' => 'user'], function () {
+    Route::middleware(['auth:sanctum', 'role:user'])->group(function () {
+        Route::get('/baskets', [BasketController::class, 'getBasket']);
+        Route::post('/baskets', [BasketController::class, 'add']);
+        Route::delete('/baskets/{id}', [BasketController::class, 'remove']);
+
+        Route::get('/orders', [OrderController::class, 'calculateReceipt']);
+    });
+});
+
+Route::group(['prefix' => 'admin'], function () {
+    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+        Route::post('/products', [ProductController::class, 'create']);
+        Route::delete('/products/{id}', [ProductController::class, 'remove']);
+
+        Route::post('/discounts', [DiscountController::class, 'create']);
+    });
+});
