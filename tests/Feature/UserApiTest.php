@@ -31,7 +31,7 @@ class UserApiTest extends TestCase
         $product = Product::factory()->create();
 
         // Make a request to add the product to the user's basket
-        $response = $this->postJson('/api/v1/user/baskets', ['product->id' => $product->id], ['Authorization' => 'Bearer ' . $token]);
+        $response = $this->postJson('/api/v1/user/baskets', ['product_id' => $product->id], ['Authorization' => 'Bearer ' . $token]);
 
         $response->assertStatus(200);
 
