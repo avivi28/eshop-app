@@ -1,0 +1,478 @@
+{
+    "auth": {
+        "bearer": [
+            {
+                "key": "token",
+                "type": "string",
+                "value": "{{api_token}}"
+            }
+        ],
+        "type": "bearer"
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "exec": [
+                    ""
+                ],
+                "type": "text/javascript"
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "exec": [
+                    ""
+                ],
+                "type": "text/javascript"
+            }
+        }
+    ],
+    "info": {
+        "_exporter_id": "22893099",
+        "_postman_id": "17865fa9-4bc5-4135-988b-ccb1eaded033",
+        "name": "EShop_App",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "item": [
+                {
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "var token = jsonData.data.token;",
+                                    "",
+                                    "if (pm.response.code == 200) {",
+                                    "    pm.collectionVariables.set(\"api_token\", token);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "name": "api/v1/login",
+                    "request": {
+                        "auth": {
+                            "type": "bearer"
+                        },
+                        "body": {
+                            "formdata": [
+                                {
+                                    "description": "[Required] string",
+                                    "key": "email",
+                                    "type": "text",
+                                    "value": "user@example.com"
+                                },
+                                {
+                                    "description": "[Required] string",
+                                    "key": "password",
+                                    "type": "text",
+                                    "value": "password"
+                                }
+                            ],
+                            "mode": "formdata"
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "type": "text",
+                                "value": "application/json"
+                            }
+                        ],
+                        "method": "POST",
+                        "url": {
+                            "host": [
+                                "{{host}}api"
+                            ],
+                            "path": [
+                                "v1",
+                                "login"
+                            ],
+                            "raw": "{{host}}api/v1/login"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "api/v1/user/baskets",
+                    "request": {
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "type": "text",
+                                "value": "application/json"
+                            }
+                        ],
+                        "method": "GET",
+                        "url": {
+                            "host": [
+                                "{{host}}api"
+                            ],
+                            "path": [
+                                "v1",
+                                "user",
+                                "baskets"
+                            ],
+                            "raw": "{{host}}api/v1/user/baskets"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "",
+                                    "",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "name": "api/v1/user/baskets",
+                    "request": {
+                        "body": {
+                            "formdata": [
+                                {
+                                    "description": "[Required] integer",
+                                    "key": "product_id",
+                                    "type": "text",
+                                    "value": "7"
+                                }
+                            ],
+                            "mode": "formdata"
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "type": "text",
+                                "value": "application/json"
+                            }
+                        ],
+                        "method": "POST",
+                        "url": {
+                            "host": [
+                                "{{host}}api"
+                            ],
+                            "path": [
+                                "v1",
+                                "user",
+                                "baskets"
+                            ],
+                            "raw": "{{host}}api/v1/user/baskets"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "api/v1/user/baskets",
+                    "request": {
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "type": "text",
+                                "value": "application/json"
+                            }
+                        ],
+                        "method": "DELETE",
+                        "url": {
+                            "host": [
+                                "{{host}}api"
+                            ],
+                            "path": [
+                                "v1",
+                                "user",
+                                "baskets",
+                                "{{product_id}}"
+                            ],
+                            "raw": "{{host}}api/v1/user/baskets/{{product_id}}"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "api/v1/user/orders",
+                    "request": {
+                        "header": [],
+                        "method": "GET",
+                        "url": {
+                            "host": [
+                                "{{host}}api"
+                            ],
+                            "path": [
+                                "v1",
+                                "user",
+                                "orders"
+                            ],
+                            "raw": "{{host}}api/v1/user/orders"
+                        }
+                    },
+                    "response": []
+                }
+            ],
+            "name": "user"
+        },
+        {
+            "item": [
+                {
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "var token = jsonData.data.token;",
+                                    "",
+                                    "if (pm.response.code == 200) {",
+                                    "    pm.collectionVariables.set(\"api_token\", token);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "name": "api/v1/login",
+                    "request": {
+                        "body": {
+                            "formdata": [
+                                {
+                                    "description": "[Required] string",
+                                    "key": "email",
+                                    "type": "text",
+                                    "value": "admin@example.com"
+                                },
+                                {
+                                    "description": "[Required] string",
+                                    "key": "password",
+                                    "type": "text",
+                                    "value": "password"
+                                }
+                            ],
+                            "mode": "formdata"
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "type": "text",
+                                "value": "application/json"
+                            }
+                        ],
+                        "method": "POST",
+                        "url": {
+                            "host": [
+                                "{{host}}api"
+                            ],
+                            "path": [
+                                "v1",
+                                "login"
+                            ],
+                            "raw": "{{host}}api/v1/login"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "var productId = jsonData.data[0].id;",
+                                    "",
+                                    "if (pm.response.code == 200) {",
+                                    "    pm.collectionVariables.set(\"product_id\", productId);",
+                                    "}",
+                                    "",
+                                    "",
+                                    ""
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "name": "api/v1/admin/products",
+                    "request": {
+                        "body": {
+                            "formdata": [
+                                {
+                                    "description": "[Required] string",
+                                    "key": "name",
+                                    "type": "text",
+                                    "value": "product name"
+                                },
+                                {
+                                    "description": "string",
+                                    "key": "desc",
+                                    "type": "text",
+                                    "value": "product description"
+                                },
+                                {
+                                    "description": "[Required] integer",
+                                    "key": "stock",
+                                    "type": "text",
+                                    "value": "10"
+                                },
+                                {
+                                    "description": "[Required] integer max 2 digits decimal",
+                                    "key": "price",
+                                    "type": "text",
+                                    "value": "9.99"
+                                }
+                            ],
+                            "mode": "formdata"
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "type": "text",
+                                "value": "application/json"
+                            }
+                        ],
+                        "method": "POST",
+                        "url": {
+                            "host": [
+                                "{{host}}api"
+                            ],
+                            "path": [
+                                "v1",
+                                "admin",
+                                "products"
+                            ],
+                            "raw": "{{host}}api/v1/admin/products"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "api/v1/admin/products",
+                    "request": {
+                        "header": [],
+                        "method": "DELETE",
+                        "url": {
+                            "host": [
+                                "{{host}}api"
+                            ],
+                            "path": [
+                                "v1",
+                                "admin",
+                                "products",
+                                "{{product_id}}"
+                            ],
+                            "query": [
+                                {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                }
+                            ],
+                            "raw": "{{host}}api/v1/admin/products/{{product_id}}?Accept=application/json"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "api/v1/admin/discounts",
+                    "request": {
+                        "body": {
+                            "formdata": [
+                                {
+                                    "description": "[Required] string",
+                                    "key": "name",
+                                    "type": "text",
+                                    "value": "discount name"
+                                },
+                                {
+                                    "description": "string",
+                                    "key": "desc",
+                                    "type": "text",
+                                    "value": "discount description"
+                                },
+                                {
+                                    "description": "boolean",
+                                    "key": "is_active",
+                                    "type": "text",
+                                    "value": "1"
+                                },
+                                {
+                                    "description": "[Required] integer min 1",
+                                    "key": "buy_quantity",
+                                    "type": "text",
+                                    "value": "2"
+                                },
+                                {
+                                    "description": "[Required] integer min 0 max 100",
+                                    "key": "percentage",
+                                    "type": "text",
+                                    "value": "75"
+                                },
+                                {
+                                    "description": "datetime",
+                                    "key": "start_date",
+                                    "type": "text",
+                                    "value": "2023-08-14T16:42:49"
+                                },
+                                {
+                                    "description": "datetime",
+                                    "key": "end_date",
+                                    "type": "text",
+                                    "value": "2023-08-15T16:42:49"
+                                },
+                                {
+                                    "description": "[Required] integer ",
+                                    "key": "product_id",
+                                    "type": "text",
+                                    "value": "7"
+                                }
+                            ],
+                            "mode": "formdata"
+                        },
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "type": "text",
+                                "value": "application/json"
+                            }
+                        ],
+                        "method": "POST",
+                        "url": {
+                            "host": [
+                                "{{host}}api"
+                            ],
+                            "path": [
+                                "v1",
+                                "admin",
+                                "discounts"
+                            ],
+                            "raw": "{{host}}api/v1/admin/discounts"
+                        }
+                    },
+                    "response": []
+                }
+            ],
+            "name": "admin"
+        }
+    ],
+    "variable": [
+        {
+            "key": "api_token",
+            "value": ""
+        },
+        {
+            "key": "product_id",
+            "value": ""
+        },
+        {
+            "key": "host",
+            "type": "string",
+            "value": "http://127.0.0.1:8000/"
+        }
+    ]
+}
