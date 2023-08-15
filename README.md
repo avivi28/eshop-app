@@ -13,7 +13,11 @@
 4.  `php artisan db:seed`
     **running at http://127.0.0.1:8000/**
 
-### To run the tests:
+### To run the tests: (with Docker & Docker-Compose)
+
+1.  `docker-compose exec app php artisan test`
+
+### To run the tests: (run locally)
 
 1.  `php artisan test`
 
