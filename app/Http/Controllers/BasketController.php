@@ -16,9 +16,9 @@ class BasketController extends Controller
     public function add(Request $request)
     {
         $productId = $request->input('product_id');
-        $userId = $request->user()->id;
+        $user_id = $request->user()->id;
 
-        Redis::rpush("basket:$userId", $productId);
+        Redis::rpush("basket:$user_id", $productId);
 
         return response()->api([]);
     }
@@ -32,8 +32,8 @@ class BasketController extends Controller
      */
     public function remove(Request $request, $productId)
     {
-        $userId = $request->user()->id;
-        $basketKey = "basket:$userId";
+        $user_id = $request->user()->id;
+        $basketKey = "basket:$user_id";
 
         $removedCount = Redis::lrem($basketKey, 1, $productId);
 
@@ -48,9 +48,9 @@ class BasketController extends Controller
      */
     public function getBasket(Request $request)
     {
-        $userId = $request->user()->id;
+        $user_id = $request->user()->id;
 
-        $basket = Redis::lrange("basket:$userId", 0, -1);
+        $basket = Redis::lrange("basket:$user_id", 0, -1);
 
         return response()->api($basket);
     }

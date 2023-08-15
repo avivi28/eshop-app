@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-// use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Discount;
@@ -12,21 +12,23 @@ use Illuminate\Support\Facades\Redis;
 
 class UserApiTest extends TestCase
 {
-    // use RefreshDatabase;
+    use RefreshDatabase;
 
     public function testAddToBasket()
     {
-        // Login
-        $response = $this->postJson('/api/v1/login', [
-            'email' => 'user@example.com',
-            'password' => 'password',
+        // Create a user with role user
+        $user = User::factory()->create([
+            'role' => 'user'
         ]);
 
-        $token = $response['data']['token'];
-        $user = $response['data']['user'];
-        $user_id = $user['id'];
+        // Get user token
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-        $product = Product::first();
+        // Get user id
+        $user_id = $user->id;
+
+        // Create a product
+        $product = Product::factory()->create();
 
         // Make a request to add the product to the user's basket
         $response = $this->postJson('/api/v1/user/baskets', ['product->id' => $product->id], ['Authorization' => 'Bearer ' . $token]);
@@ -34,26 +36,28 @@ class UserApiTest extends TestCase
         $response->assertStatus(200);
 
         // Assert that the product is added to the user's basket in Redis
-        $basket = Redis::smembers("basket:{$user_id}");
+        $basket = Redis::lrange("basket:$user_id", 0, -1);
         $this->assertTrue(in_array($product->id, $basket));
     }
 
     public function testRemoveFromBasket()
     {
-        // Login
-        $response = $this->postJson('/api/v1/login', [
-            'email' => 'user@example.com',
-            'password' => 'password',
+        // Create a user with role user
+        $user = User::factory()->create([
+            'role' => 'user'
         ]);
 
-        $token = $response['data']['token'];
-        $user = $response['data']['user'];
-        $user_id = $user['id'];
+        // Get user token
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-        $product = Product::first();
+        // Get user id
+        $user_id = $user->id;
+
+        // Create a product
+        $product = Product::factory()->create();
 
         // Add the product to the user's basket in Redis
-        Redis::sadd("basket:{$user_id}", $product->id);
+        Redis::rpush("basket:{$user_id}", $product->id);
 
         // Make a request to remove the product from the user's basket with bearer token
         $response = $this->deleteJson("/api/v1/user/baskets/{$product->id}", [], ['Authorization' => 'Bearer ' . $token]);
@@ -61,25 +65,26 @@ class UserApiTest extends TestCase
         $response->assertStatus(200);
 
         // Assert that the product is removed from the user's basket in Redis
-        $basket = Redis::smembers("basket:{$user_id}");
+        $basket = Redis::lrange("basket:$user_id", 0, -1);
         $this->assertFalse(in_array($product->id, $basket));
     }
 
     public function testGetBasket()
     {
-        // Login
-        $response = $this->postJson('/api/v1/login', [
-            'email' => 'user@example.com',
-            'password' => 'password',
+        // Create a user with role user
+        $user = User::factory()->create([
+            'role' => 'user'
         ]);
 
-        $token = $response['data']['token'];
-        $user = $response['data']['user'];
-        $user_id = $user['id'];
+        // Get user token
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Get user id
+        $user_id = $user->id;
 
         // Add some products to the user's basket in Redis
-        Redis::sadd("basket:{$user_id}", 1);
-        Redis::sadd("basket:{$user_id}", 2);
+        Redis::rpush("basket:{$user_id}", 1);
+        Redis::rpush("basket:{$user_id}", 2);
 
         // Make a request to get the user's basket
         $response = $this->withHeaders([
